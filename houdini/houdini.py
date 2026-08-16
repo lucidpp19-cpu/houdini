@@ -6,6 +6,9 @@ from logging.handlers import RotatingFileHandler
 
 from redis import asyncio as aioredis
 from cacheout import Cache
+from sqlalchemy.dialects import registry
+
+registry.register('postgresql.asyncpg', 'gino.dialects.asyncpg', 'AsyncpgDialect')
 
 from houdini import PenguinStringCompiler
 from houdini.data import db
@@ -127,7 +130,7 @@ class Houdini:
             self.config.port
         )
 
-        await self.db.set_bind('postgresql://{}:{}@{}/{}'.format(
+        await self.db.set_bind('postgresql+asyncpg://{}:{}@{}/{}'.format(
             self.config.database_username, self.config.database_password,
             self.config.database_address,
             self.config.database_name))
